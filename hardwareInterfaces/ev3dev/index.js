@@ -35,10 +35,11 @@ exports.enabled = false;
 if (exports.enabled) {
     var fs = require('fs');
     var mpd = require('mpd');
+    var ev3 = require('ev3dev');
     var _ = require('lodash');
     var server = require(__dirname + '/../../libraries/HybridObjectsHardwareInterfaces');
 
-    var mpdServers = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf8"));
+    //var mpdServers = JSON.parse(fs.readFileSync(__dirname + "/config.json", "utf8"));
     var cmd = mpd.cmd;
 
 

@@ -17,16 +17,15 @@ exports.enabled = true;
 if (exports.enabled) {
     var fs = require('fs'),
         server = require(__dirname + '/../../libraries/HybridObjectsHardwareInterfaces'),
-        GPIO = require('onoff').Gpio;
+        ev3 = require('ev3dev');
+        //GPIO = require('onoff').Gpio;
 
     /*    
         Example item object in JSON format
         {
-                "id": "button",
-                "ioName": "digital",
-                "pin": 17,
-                "direction": "in",
-                "edge": "both"
+                "id": "motor1",
+                "ioName": "speed",
+                "port": "outA"
         }
     */
 
@@ -51,7 +50,7 @@ if (exports.enabled) {
                 var item = items[key];
                 if ("GPIO" in item) {
                     if (server.getDebug()) console.log("raspberryPi: removing item with the id = '" + item.id + "' and ioName = '" + item.ioName + "'");
-                    item.GPIO.unexport();
+                    //item.GPIO.unexport();
                 }
             }
         }
@@ -66,7 +65,7 @@ if (exports.enabled) {
             // only send if we don't have an error and the value has changed
         else if (!("lastValue" in item) || item.lastValue !== value) {
             item.lastValue = value;
-            callback(item.id, item.ioName, value, "d"); // mode: d for digital
+            callback(item.id, item.ioName, value); // mode: d for digital
         }
     }
 
@@ -97,10 +96,10 @@ if (exports.enabled) {
                 if (server.getDebug()) console.log("raspberryPi: send() item not found: id = '" + objName + "' and ioName = '" + ioName + "'");
                 return;
             }
-            items[key].GPIO.write(value);
+            items[key].dutyCycleSp = value;
         }
         catch (err) {
-            if (server.getDebug()) console.log("raspberryPi: GPIO.write() error: " + err);
+            if (server.getDebug()) console.log("raspberryPi: dutycycle.write() error: " + err);
         }
     };
 
@@ -120,28 +119,19 @@ if (exports.enabled) {
                 throw ("config.json contains two or more items with the id = '" + item.id + "' and ioName = '" + item.ioName + "'");
             }
 
-            // if edge is not specified, fallback to the default (none)
-            if (!("edge" in item)) {
-                item.edge = "none"
-            }
+            
 
-            item.GPIO = new GPIO(item.pin, item.direction, item.edge);
-
-            // if this item produces input, wire it up to write results to the server
-            if (item.direction === "in") {
-                // watch the GPIO for state changes
-                item.GPIO.watch(function (err, value) {
-                    writeGpioToServer(err, value, item, server.writeIOToServer);
-                });
-            }
+            item.motor = new ev3.Motor(item.port);
+            item.motor.dutyCycleSp = 50;
+            item.motor.command = 'run-forever';
 
             if (server.getDebug()) console.log("raspberryPi: adding item with the id = '" + item.id + "' and ioName = '" + item.ioName + "'");
-            server.addIO(item.id, item.ioName, "default", "raspberryPi");
+            server.addIO(item.id, item.ioName, "default", "ev32");
 
             items[key] = item;
         });
 
-        server.clearIO("raspberryPi");
+        server.clearIO("ev32");
     };
 
     /**
@@ -149,7 +139,7 @@ if (exports.enabled) {
      *       Clean up open file handles or resources and return quickly.
      **/
     exports.shutdown = function () {
-        if (server.getDebug()) console.log("raspberryPi: shutdown()");
+        if (server.getDebug()) console.log("ev32: shutdown()");
 
         teardown();
     };

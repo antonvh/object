@@ -1,0 +1,7 @@
+[
+		{
+			"id": "motor1",
+			"ioName": "speed",
+			"port": "ttyAMA0:outA"
+		}
+]
