@@ -122,7 +122,7 @@ if (exports.enabled) {
             
 
             item.motor = new ev3.Motor(item.port);
-            item.motor.dutyCycleSp = 50;
+            item.motor.dutyCycleSp = 10;
             item.motor.command = 'run-forever';
 
             if (server.getDebug()) console.log("raspberryPi: adding item with the id = '" + item.id + "' and ioName = '" + item.ioName + "'");
