@@ -17,7 +17,7 @@ exports.enabled = true;
 if (exports.enabled) {
     var fs = require('fs'),
         server = require(__dirname + '/../../libraries/HybridObjectsHardwareInterfaces'),
-        ev3 = require('ev3dev');
+        ev3 = require('ev3dev-lang');
         //GPIO = require('onoff').Gpio;
 
     /*    
