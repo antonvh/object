@@ -103,6 +103,7 @@ if (exports.enabled) {
             console.log("set motor "+key+" to:" + Math.round(value*100));
             if (value < 0.05) {
                 items[key].command = 'stop';
+            };
         }
         catch (err) {
             if (server.getDebug()) console.log("raspberryPi: dutycycle.write() error: " + err);
