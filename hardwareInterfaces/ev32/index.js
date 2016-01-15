@@ -89,6 +89,8 @@ if (exports.enabled) {
      * @param {type} type The type
      **/
     exports.send = function (objName, ioName, value, mode, type) {
+        console.log(objName,ioName,value,mode,type);
+        
         var key = objName + ioName;
 
         try {
@@ -96,7 +98,8 @@ if (exports.enabled) {
                 if (server.getDebug()) console.log("raspberryPi: send() item not found: id = '" + objName + "' and ioName = '" + ioName + "'");
                 return;
             }
-            items[key].dutyCycleSp = value;
+            items[key].dutyCycleSp = Math.round(value*100);
+            console.log("set motor "+key+"speed to:" + value*100);
         }
         catch (err) {
             if (server.getDebug()) console.log("raspberryPi: dutycycle.write() error: " + err);
@@ -124,6 +127,8 @@ if (exports.enabled) {
             item.motor = new ev3.Motor(item.port);
             item.motor.dutyCycleSp = 10;
             item.motor.command = 'run-forever';
+            
+            console.log("created:"+key);
 
             if (server.getDebug()) console.log("raspberryPi: adding item with the id = '" + item.id + "' and ioName = '" + item.ioName + "'");
             server.addIO(item.id, item.ioName, "default", "ev32");
