@@ -98,11 +98,11 @@ if (exports.enabled) {
                 if (server.getDebug()) console.log("raspberryPi: send() item not found: id = '" + objName + "' and ioName = '" + ioName + "'");
                 return;
             }
-            items[key].dutyCycleSp = Math.round(value*100);
-            items[key].command = 'run-forever';
+            items[key].motor.dutyCycleSp = Math.round(value*100);
+            items[key].motor.command = 'run-forever';
             console.log("set motor "+key+" to:" + Math.round(value*100));
             if (value < 0.05) {
-                items[key].command = 'stop';
+                items[key].motor.command = 'stop';
             };
         }
         catch (err) {
